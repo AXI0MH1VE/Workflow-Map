@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { WorkspaceState, Category, Project, WorkflowNode } from './types';
-import { Edge, Connection, addEdge, applyNodeChanges, applyEdgeChanges, NodeChange, EdgeChange } from '@xyflow/react';
+import { Connection, addEdge, applyNodeChanges, applyEdgeChanges } from '@xyflow/react';
+import type { Edge, NodeChange, EdgeChange } from '@xyflow/react';
 
 const initialCategories: Category[] = [
   { id: 'cat-1', name: 'CORE SYSTEMS', projects: ['proj-1', 'proj-2'] },
