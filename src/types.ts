@@ -14,7 +14,16 @@ export type WorkflowNode = Node<WorkflowNodeData>;
 export interface Category {
   id: string;
   name: string;
+  description?: string;
   projects: string[]; // project IDs
+  parentId?: string | null;
+}
+
+export interface DeploymentSpec {
+  url: string;
+  status: 'active' | 'revoked';
+  token: string;
+  lastDeployed: string;
 }
 
 export interface Project {
@@ -25,13 +34,17 @@ export interface Project {
   nodes: WorkflowNode[];
   edges: Edge[];
   notes: string;
-  status: 'active' | 'archived';
+  status: 'active' | 'archived' | 'deleted';
   lastUpdated: string;
+  deployment?: DeploymentSpec;
 }
+
+export type ViewMode = 'MAT' | 'NOTES';
 
 export interface WorkspaceState {
   categories: Category[];
   projects: Project[];
   activeProjectId: string | null;
   activeCategoryId: string | null;
+  viewMode: ViewMode;
 }

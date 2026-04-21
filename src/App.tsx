@@ -77,22 +77,46 @@ const Sidebar = () => {
 };
 
 const Header = () => {
-  const { projects, activeProjectId, categories } = useWorkspaceStore();
+  const { projects, activeProjectId, categories, viewMode, setViewMode, deployProject } = useWorkspaceStore();
   const activeProject = projects.find(p => p.id === activeProjectId);
   const activeCategory = categories.find(c => c.id === activeProject?.categoryId);
 
   return (
     <header className="header">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{ fontStyle: 'italic', opacity: 0.5 }}>/ {activeCategory?.name} /</div>
-        <h2 style={{ fontSize: '20px' }}>{activeProject?.name || 'SELECT PROJECT'}</h2>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ fontStyle: 'italic', opacity: 0.5, fontSize: '12px' }}>{activeCategory?.name} /</div>
+          <h2 style={{ fontSize: '20px' }}>{activeProject?.name || 'SELECT PROJECT'}</h2>
+        </div>
+        
+        <div className="tab-group">
+          <button 
+            className={`tab-btn ${viewMode === 'MAT' ? 'active' : ''}`}
+            onClick={() => setViewMode('MAT')}
+          >
+            WORKFLOW MAT
+          </button>
+          <button 
+            className={`tab-btn ${viewMode === 'NOTES' ? 'active' : ''}`}
+            onClick={() => setViewMode('NOTES')}
+          >
+            PROJECT NOTES
+          </button>
+        </div>
       </div>
+
       <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
-          <span style={{ fontSize: '9px', color: 'var(--accent-color)', fontWeight: 800 }}>STABLE CONNECTION</span>
-          <span style={{ fontSize: '8px', color: 'var(--text-secondary)' }}>ID: {activeProjectId?.slice(0,8)}...</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div className="pulse-dot"></div>
+            <span style={{ fontSize: '9px', color: 'var(--accent-color)', fontWeight: 800, letterSpacing: '1px' }}>LIVE LINKED SYSTEM</span>
+          </div>
+          <span style={{ fontSize: '8px', color: 'var(--text-secondary)' }}>ID: {activeProjectId?.slice(0,8)}... [PROTO_V2]</span>
         </div>
-        <button className="brute-btn primary">
+        <button 
+          className="brute-btn primary"
+          onClick={() => deployProject()}
+        >
           <Rocket size={16} />
           <span>DEPLOY LIVE</span>
         </button>
@@ -101,37 +125,84 @@ const Header = () => {
   );
 };
 
+const NotesView = () => {
+  const { projects, activeProjectId, updateNotes } = useWorkspaceStore();
+  const project = projects.find(p => p.id === activeProjectId);
+
+  if (!project) return null;
+
+  return (
+    <div className="notes-container">
+      <textarea
+        className="notes-editor"
+        value={project.notes}
+        onChange={(e) => updateNotes(e.target.value)}
+        placeholder="Enter project documentation and structured instructions here..."
+      />
+    </div>
+  );
+};
+
 const PropertiesPanel = () => {
-  const { projects, activeProjectId } = useWorkspaceStore();
+  const { projects, activeProjectId, revokeDeployment } = useWorkspaceStore();
   const project = projects.find(p => p.id === activeProjectId);
 
   return (
     <div className="properties-panel">
-      <div style={{ padding: '20px', borderBottom: '1px solid var(--border-color)' }}>
+      <div style={{ padding: '24px', borderBottom: '1px solid var(--border-color)' }}>
         <h3 style={{ fontSize: '14px', marginBottom: '12px' }}>INSPECTOR</h3>
-        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
           {project?.description}
         </p>
       </div>
-      <div style={{ padding: '20px' }}>
-         <div style={{ marginBottom: '20px' }}>
-            <label style={{ fontSize: '10px', display: 'block', marginBottom: '8px' }}>DEPLOYMENT STATUS</label>
-            <div style={{ background: '#000', padding: '12px', border: '1px solid var(--border-color)', fontSize: '11px' }}>
-               <div style={{ color: 'var(--accent-color)' }}>● ONLINE</div>
-               <div style={{ color: 'var(--text-secondary)' }}>LAST_SYNC: {new Date().toLocaleTimeString()}</div>
-            </div>
-         </div>
-         <div style={{ display: 'grid', gap: '8px' }}>
-            <button className="brute-btn" style={{ fontSize: '10px' }}><Database size={12} /> SYNC DATABASE</button>
-            <button className="brute-btn" style={{ fontSize: '10px' }}><Library size={12} /> EXPORT SCHEMA</button>
-         </div>
+
+      <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div>
+          <label style={{ fontSize: '10px', display: 'block', marginBottom: '12px', fontWeight: 800 }}>DEPLOYMENT TELEMETRY</label>
+          <div style={{ background: '#000', padding: '16px', border: '1px solid var(--border-color)', fontSize: '11px' }}>
+            {project?.deployment ? (
+              <>
+                <div style={{ color: project.deployment.status === 'active' ? 'var(--accent-color)' : 'var(--error)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'currentColor' }} />
+                  {project.deployment.status.toUpperCase()}
+                </div>
+                <div style={{ color: 'var(--text-secondary)', marginBottom: '4px' }}>URL: {project.deployment.url}</div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: '9px', fontFamily: 'var(--font-mono)' }}>TOKEN: {project.deployment.token}</div>
+                
+                {project.deployment.status === 'active' && (
+                  <button 
+                    className="brute-btn" 
+                    style={{ marginTop: '16px', width: '100%', fontSize: '10px', borderColor: 'var(--error)', color: 'var(--error)' }}
+                    onClick={() => revokeDeployment()}
+                  >
+                    KILL LIVE LINK
+                  </button>
+                )}
+              </>
+            ) : (
+              <div style={{ color: 'var(--text-secondary)' }}>NO ACTIVE DEPLOYMENT</div>
+            )}
+          </div>
+        </div>
+
+        <div>
+           <label style={{ fontSize: '10px', display: 'block', marginBottom: '12px', fontWeight: 800 }}>OPERATIONAL CONTROLS</label>
+           <div style={{ display: 'grid', gap: '8px' }}>
+              <button className="brute-btn" style={{ fontSize: '10px' }}><Database size={12} /> SYNC DATABASE</button>
+              <button className="brute-btn" style={{ fontSize: '10px' }}><Library size={12} /> EXPORT SCHEMA</button>
+           </div>
+        </div>
+      </div>
+
+      <div style={{ padding: '24px', borderTop: '1px solid var(--border-color)', fontSize: '9px', color: 'var(--text-secondary)' }}>
+        LAST_SYNCED: {project?.lastUpdated ? new Date(project.lastUpdated).toLocaleTimeString() : 'N/A'}
       </div>
     </div>
   );
 };
 
 function App() {
-  const { projects, activeProjectId, onNodesChange, onEdgesChange, onConnect } = useWorkspaceStore();
+  const { projects, activeProjectId, onNodesChange, onEdgesChange, onConnect, viewMode } = useWorkspaceStore();
   const activeProject = projects.find(p => p.id === activeProjectId);
 
   return (
@@ -140,18 +211,22 @@ function App() {
       <main className="main-content">
         <Header />
         <div className="canvas-container">
-          <ReactFlow
-            nodes={activeProject?.nodes || []}
-            edges={activeProject?.edges || []}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            nodeTypes={nodeTypes}
-            colorMode="dark"
-          >
-            <Background />
-            <Controls />
-          </ReactFlow>
+          {viewMode === 'MAT' ? (
+            <ReactFlow
+              nodes={activeProject?.nodes || []}
+              edges={activeProject?.edges || []}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              nodeTypes={nodeTypes}
+              colorMode="dark"
+            >
+              <Background />
+              <Controls />
+            </ReactFlow>
+          ) : (
+            <NotesView />
+          )}
         </div>
       </main>
       <PropertiesPanel />

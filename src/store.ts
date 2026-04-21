@@ -48,10 +48,14 @@ const initialProjects: Project[] = [
 
 interface WorkspaceActions {
   setActiveProject: (id: string) => void;
+  setViewMode: (mode: ViewMode) => void;
   onNodesChange: (changes: NodeChange[]) => void;
   onEdgesChange: (changes: EdgeChange[]) => void;
   onConnect: (connection: Connection) => void;
   addProject: (categoryId: string) => void;
+  updateNotes: (content: string) => void;
+  deployProject: () => void;
+  revokeDeployment: () => void;
 }
 
 export const useWorkspaceStore = create<WorkspaceState & WorkspaceActions>((set, get) => ({
@@ -59,8 +63,10 @@ export const useWorkspaceStore = create<WorkspaceState & WorkspaceActions>((set,
   projects: initialProjects,
   activeProjectId: initialProjects[0].id,
   activeCategoryId: initialCategories[0].id,
+  viewMode: 'MAT',
 
   setActiveProject: (id) => set({ activeProjectId: id }),
+  setViewMode: (mode) => set({ viewMode: mode }),
 
   onNodesChange: (changes) => {
     const { activeProjectId, projects } = get();
@@ -98,6 +104,48 @@ export const useWorkspaceStore = create<WorkspaceState & WorkspaceActions>((set,
     });
   },
 
+  updateNotes: (content) => {
+    const { activeProjectId, projects } = get();
+    if (!activeProjectId) return;
+    set({
+      projects: projects.map((p) =>
+        p.id === activeProjectId ? { ...p, notes: content, lastUpdated: new Date().toISOString() } : p
+      ),
+    });
+  },
+
+  deployProject: () => {
+    const { activeProjectId, projects } = get();
+    if (!activeProjectId) return;
+    set({
+      projects: projects.map((p) =>
+        p.id === activeProjectId
+          ? {
+              ...p,
+              deployment: {
+                url: `https://live-link.run/${p.id.slice(0, 8)}`,
+                status: 'active',
+                token: `jwt_${Math.random().toString(36).substr(2, 9)}`,
+                lastDeployed: new Date().toISOString(),
+              },
+            }
+          : p
+      ),
+    });
+  },
+
+  revokeDeployment: () => {
+    const { activeProjectId, projects } = get();
+    if (!activeProjectId) return;
+    set({
+      projects: projects.map((p) =>
+        p.id === activeProjectId
+          ? { ...p, deployment: p.deployment ? { ...p.deployment, status: 'revoked' } : undefined }
+          : p
+      ),
+    });
+  },
+
   addProject: (categoryId) => {
     const newId = `proj-${Date.now()}`;
     const newProject: Project = {
@@ -117,7 +165,8 @@ export const useWorkspaceStore = create<WorkspaceState & WorkspaceActions>((set,
       categories: state.categories.map(c => 
         c.id === categoryId ? { ...c, projects: [...c.projects, newId] } : c
       ),
-      activeProjectId: newId
+      activeProjectId: newId,
+      viewMode: 'MAT'
     }));
   }
 }));
