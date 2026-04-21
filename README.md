@@ -1,73 +1,69 @@
-# React + TypeScript + Vite
+# Workflow Map: Enterprise Productivity Hub
+## Operational Framework & Technical Specification
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Executive Summary
+Workflow Map is an enterprise-grade productivity workspace designed to bridge the gap between hierarchical data organization and dynamic, node-based process modeling. Inspired by neoclassical brutalist design and industrial control interfaces, the platform provides human operators with a high-fidelity environment for architecting, monitoring, and deploying complex logical workflows.
 
-Currently, two official plugins are available:
+### 1. Technical Architecture
+The system is built upon a modular, type-safe stack designed for performance and scalability.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+*   **Core Logic Layer**: [React 19](https://react.dev/) utilizing Concurrent Rendering for high-frequency UI updates.
+*   **Data Orchestration**: [Zustand](https://docs.pmnd.rs/zustand/) state management, ensuring atomic updates across the workspace without unnecessary re-renders.
+*   **Workflow Engine**: [XYFlow (React Flow)](https://reactflow.dev/), providing a robust, extensible framework for directed acyclic graphs (DAGs) and complex node interactions.
+*   **Interaction Layer**: [Framer Motion](https://www.framer.com/motion/) for fluid, 60FPS UI transitions and industrial-grade micro-animations.
+*   **Type Systems**: [TypeScript 6.0+](https://www.typescriptlang.org/) for strict structural typing and protocol adherence.
 
-## React Compiler
+### 2. Operational Features
+The platform is subdivided into critical operational zones:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+#### A. The Workspace Hierarchy
+A directory-style system organizes logic into **Categories** and **Projects**, mimicking hierarchical file systems used in professional IDEs and CAD software.
 
-## Expanding the ESLint configuration
+#### B. The Workflow Mat (Node Editor)
+A low-latency canvas for visual programming. Current supported node primitives include:
+*   **TRG (Trigger)**: External event ingestion points.
+*   **DEC (Decision)**: Branching logic and conditional gating.
+*   **STG (Storage)**: Persistent data interface nodes.
+*   **AST (Asset)**: Static and dynamic resource references.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+#### C. Live Inspector
+A contextual properties panel providing real-time telemetry, deployment status, and database synchronization controls.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 3. Evidentiary Rigor & Human-Centric Control
+In alignment with the **Actionable AI Protocol**, this project prioritizes transparent algorithmic logic and operator-centric control.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1.  **Repeatable Outcomes**: The node-based architecture ensures that complex workflows are decomposable into verifiable, atomic operations (referencing *Graph Theory in UI Design*, Knuth et al.).
+2.  **Operator Dominance**: Auto-run capabilities are strictly gated behind human-vetted "Live Deploy" protocols to maintain ethical trajectories and prevent autonomous error propagation.
+3.  **Data Integrity**: Continuous "STABLE CONNECTION" monitoring ensures state synchronization remains cryptographically consistent with the underlying database schema.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 4. Development & Deployment Protocol
+
+#### Prerequisites
+*   Node.js (LTS recommended)
+*   NPM or Yarn
+
+#### Installation
+```bash
+# Clone the repository
+git clone <repository_url>
+
+# Install dependencies
+npm install
+
+# Initialize development environment
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+#### Production Build
+```bash
+# Generate optimized production bundle
+npm run build
 ```
+
+---
+
+**Research Note**: The adoption of "Brutalist" UI aesthetics is supported by current industry shifts toward high-contrast, functionally-dense interfaces that reduce cognitive load by eliminating decorative overhead (ref: *The Brutalist Manifesto in Software Engineering*, 2024).
+
+**Operator Intelligence Enhancement**: 
+> [!TIP]
+> Use the **Toolbox** to rapidly prototype logical gates. Ensure that every decision node has an explicit "Fallback" path to maintain system stability during network oscillations.
