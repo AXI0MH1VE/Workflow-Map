@@ -1,5 +1,5 @@
 import { Handle, Position } from '@xyflow/react';
-import { workflowNodeData } from '../types';
+import type { WorkflowNodeData } from '../types';
 import { Play, Settings, Database, Box, Cpu } from 'lucide-react';
 
 const NodeWrapper = ({ data, selected, children, type }: { data: any, selected: boolean, children: any, type: string }) => {
