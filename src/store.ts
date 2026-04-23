@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { WorkspaceState, Category, Project, WorkflowNode, ViewMode } from './types';
+import type { WorkspaceState, Category, Project, WorkflowNode, ViewMode, GPTIntegrationConfig, GPTMessage } from './types';
 import { addEdge, applyNodeChanges, applyEdgeChanges } from '@xyflow/react';
 import type { Edge, NodeChange, EdgeChange, Connection } from '@xyflow/react';
 
@@ -62,6 +62,8 @@ interface WorkspaceActions {
   deployProject: () => void;
   revokeDeployment: () => void;
   setShowDeploymentModal: (show: boolean) => void;
+  sendGPTMessage: (content: string) => void;
+  updateGPTConfig: (config: Partial<GPTIntegrationConfig>) => void;
 }
 
 export const useWorkspaceStore = create<WorkspaceState & WorkspaceActions & { showDeploymentModal: boolean }>((set, get) => ({
@@ -71,10 +73,38 @@ export const useWorkspaceStore = create<WorkspaceState & WorkspaceActions & { sh
   activeCategoryId: initialCategories[0].id,
   viewMode: 'MAT',
   showDeploymentModal: false,
+  gptIntegration: {
+    isEnabled: true,
+    model: 'gpt-4o',
+    temperature: 0.1,
+    systemPrompt: 'You are an Axiom Hive verification engine. Enforce strict structural logic, grammatically precise outputs, and absolute adherence to Euclidean Audit Proposals.',
+    conversationHistory: [],
+  },
 
   setActiveProject: (id) => set({ activeProjectId: id }),
   setViewMode: (mode) => set({ viewMode: mode }),
   setShowDeploymentModal: (show) => set({ showDeploymentModal: show }),
+
+  updateGPTConfig: (config) => set((state) => ({
+    gptIntegration: { ...state.gptIntegration, ...config }
+  })),
+
+  sendGPTMessage: (content) => {
+    const newMessage: GPTMessage = {
+      id: `gpt-msg-${Date.now()}`,
+      role: 'user',
+      content,
+      timestamp: new Date().toISOString(),
+      deterministicEvaluation: true,
+    };
+    
+    set((state) => ({
+      gptIntegration: {
+        ...state.gptIntegration,
+        conversationHistory: [...state.gptIntegration.conversationHistory, newMessage]
+      }
+    }));
+  },
 
   onNodesChange: (changes) => {
     const { activeProjectId } = get();

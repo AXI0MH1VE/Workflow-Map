@@ -59,7 +59,23 @@ export interface Project {
   deployment?: DeploymentSpec;
 }
 
-export type ViewMode = 'MAT' | 'NOTES';
+export type ViewMode = 'MAT' | 'NOTES' | 'GPT_INTERFACE';
+
+export interface GPTMessage {
+  id: string;
+  role: 'system' | 'user' | 'assistant' | 'function';
+  content: string;
+  timestamp: string;
+  deterministicEvaluation?: boolean;
+}
+
+export interface GPTIntegrationConfig {
+  isEnabled: boolean;
+  model: string;
+  temperature: number;
+  systemPrompt: string;
+  conversationHistory: GPTMessage[];
+}
 
 export interface WorkspaceState {
   categories: Category[];
@@ -67,4 +83,5 @@ export interface WorkspaceState {
   activeProjectId: string | null;
   activeCategoryId: string | null;
   viewMode: ViewMode;
+  gptIntegration: GPTIntegrationConfig;
 }
