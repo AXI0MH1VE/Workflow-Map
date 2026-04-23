@@ -130,6 +130,12 @@ code, pre {
   box-shadow: 0 0 15px var(--accent-glow);
 }
 
+.brute-btn.active {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: rgba(0, 255, 95, 0.05);
+}
+
 .brute-btn.primary {
   background: var(--accent-color);
   color: #000;

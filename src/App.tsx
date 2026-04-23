@@ -23,15 +23,15 @@ const Sidebar = () => {
       <div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)' }}>
         <button 
           onClick={() => setActiveTab('WORKSPACE')}
-          className="brute-btn" 
-          style={{ flex: 1, border: 'none', color: activeTab === 'WORKSPACE' ? 'var(--accent-color)' : 'var(--text-secondary)' }}
+          className={`brute-btn ${activeTab === 'WORKSPACE' ? 'active' : ''}`}
+          style={{ flex: 1, border: 'none' }}
         >
           WORKSPACE
         </button>
         <button 
           onClick={() => setActiveTab('TOOLBOX')}
-          className="brute-btn" 
-          style={{ flex: 1, border: 'none', color: activeTab === 'TOOLBOX' ? 'var(--accent-color)' : 'var(--text-secondary)' }}
+          className={`brute-btn ${activeTab === 'TOOLBOX' ? 'active' : ''}`}
+          style={{ flex: 1, border: 'none' }}
         >
           TOOLBOX
         </button>
@@ -90,10 +90,10 @@ const Sidebar = () => {
         ) : (
           <div style={{ display: 'grid', gap: '12px' }}>
             <div style={{ color: 'var(--text-secondary)', fontSize: '10px', textTransform: 'uppercase', marginBottom: '8px' }}>Logic Elements</div>
-            <div className="brute-btn" style={{ fontSize: '12px', justifyContent: 'flex-start' }}><Plus size={14} /> TRIGGER NODE</div>
-            <div className="brute-btn" style={{ fontSize: '12px', justifyContent: 'flex-start' }}><Plus size={14} /> DECISION NODE</div>
-            <div className="brute-btn" style={{ fontSize: '12px', justifyContent: 'flex-start' }}><Plus size={14} /> STORAGE NODE</div>
-            <div className="brute-btn" style={{ fontSize: '12px', justifyContent: 'flex-start' }}><Plus size={14} /> ASSET NODE</div>
+            <button className="brute-btn" style={{ fontSize: '12px', justifyContent: 'flex-start' }} onClick={() => useWorkspaceStore.getState().addNode('trigger')}><Plus size={14} /> TRIGGER NODE</button>
+            <button className="brute-btn" style={{ fontSize: '12px', justifyContent: 'flex-start' }} onClick={() => useWorkspaceStore.getState().addNode('decision')}><Plus size={14} /> DECISION NODE</button>
+            <button className="brute-btn" style={{ fontSize: '12px', justifyContent: 'flex-start' }} onClick={() => useWorkspaceStore.getState().addNode('storage')}><Plus size={14} /> STORAGE NODE</button>
+            <button className="brute-btn" style={{ fontSize: '12px', justifyContent: 'flex-start' }} onClick={() => useWorkspaceStore.getState().addNode('asset')}><Plus size={14} /> ASSET NODE</button>
           </div>
         )}
       </div>
@@ -231,11 +231,11 @@ const PropertiesPanel = () => {
 };
 
 const DeploymentModal = () => {
-  const { activeProjectId, projects, revokeDeployment } = useWorkspaceStore();
+  const { activeProjectId, projects, revokeDeployment, showDeploymentModal, setShowDeploymentModal } = useWorkspaceStore();
   const project = projects.find(p => p.id === activeProjectId);
   const deploy = project?.deployment;
 
-  if (!deploy) return null;
+  if (!showDeploymentModal || !deploy) return null;
 
   return (
     <div 
@@ -295,7 +295,7 @@ const DeploymentModal = () => {
            >
              {deploy.status === 'revoked' ? 'REVOKED' : 'REVOKE ACCESS'}
            </button>
-           <button className="brute-btn" style={{ border: 'none' }} onClick={() => window.location.reload()}>CLOSE</button>
+           <button className="brute-btn" style={{ border: 'none' }} onClick={() => setShowDeploymentModal(false)}>CLOSE</button>
         </div>
       </div>
     </div>

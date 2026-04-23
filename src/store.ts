@@ -54,55 +54,59 @@ interface WorkspaceActions {
   onEdgesChange: (changes: EdgeChange[]) => void;
   onConnect: (connection: Connection) => void;
   addProject: (categoryId: string) => void;
+  addNode: (type: WorkflowNode['type']) => void;
   updateNotes: (content: string) => void;
   deployProject: () => void;
   revokeDeployment: () => void;
+  setShowDeploymentModal: (show: boolean) => void;
 }
 
-export const useWorkspaceStore = create<WorkspaceState & WorkspaceActions>((set, get) => ({
+export const useWorkspaceStore = create<WorkspaceState & WorkspaceActions & { showDeploymentModal: boolean }>((set, get) => ({
   categories: initialCategories,
   projects: initialProjects,
   activeProjectId: initialProjects[0].id,
   activeCategoryId: initialCategories[0].id,
   viewMode: 'MAT',
+  showDeploymentModal: false,
 
   setActiveProject: (id) => set({ activeProjectId: id }),
   setViewMode: (mode) => set({ viewMode: mode }),
+  setShowDeploymentModal: (show) => set({ showDeploymentModal: show }),
 
   onNodesChange: (changes) => {
-    const { activeProjectId, projects } = get();
+    const { activeProjectId } = get();
     if (!activeProjectId) return;
-    set({
-      projects: projects.map((p) =>
+    set((state) => ({
+      projects: state.projects.map((p) =>
         p.id === activeProjectId
           ? { ...p, nodes: applyNodeChanges(changes, p.nodes) as WorkflowNode[] }
           : p
       ),
-    });
+    }));
   },
 
   onEdgesChange: (changes) => {
-    const { activeProjectId, projects } = get();
+    const { activeProjectId } = get();
     if (!activeProjectId) return;
-    set({
-      projects: projects.map((p) =>
+    set((state) => ({
+      projects: state.projects.map((p) =>
         p.id === activeProjectId
           ? { ...p, edges: applyEdgeChanges(changes, p.edges) }
           : p
       ),
-    });
+    }));
   },
 
   onConnect: (connection) => {
-    const { activeProjectId, projects } = get();
+    const { activeProjectId } = get();
     if (!activeProjectId) return;
-    set({
-      projects: projects.map((p) =>
+    set((state) => ({
+      projects: state.projects.map((p) =>
         p.id === activeProjectId
           ? { ...p, edges: addEdge(connection, p.edges) }
           : p
       ),
-    });
+    }));
   },
 
   updateNotes: (content) => {
@@ -119,6 +123,7 @@ export const useWorkspaceStore = create<WorkspaceState & WorkspaceActions>((set,
     const { activeProjectId, projects } = get();
     if (!activeProjectId) return;
     set({
+      showDeploymentModal: true,
       projects: projects.map((p) =>
         p.id === activeProjectId
           ? {
@@ -169,5 +174,27 @@ export const useWorkspaceStore = create<WorkspaceState & WorkspaceActions>((set,
       activeProjectId: newId,
       viewMode: 'MAT'
     }));
-  }
+  },
+
+  addNode: (type) => {
+    const { activeProjectId, projects } = get();
+    if (!activeProjectId) return;
+    
+    const newNode: WorkflowNode = {
+      id: `${type}-${Date.now()}`,
+      type,
+      position: { x: 100, y: 100 },
+      data: { 
+        label: `${type.toUpperCase()} NODE`, 
+        type, 
+        config: {} 
+      },
+    };
+
+    set({
+      projects: projects.map((p) =>
+        p.id === activeProjectId ? { ...p, nodes: [...p.nodes, newNode] } : p
+      ),
+    });
+  },
 }));

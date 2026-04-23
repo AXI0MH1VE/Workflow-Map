@@ -20,7 +20,9 @@ const NodeWrapper = ({ data, selected, children, type }: { data: any, selected: 
       <div className="node-body">
         {children}
       </div>
-      <Handle type="target" position={Position.Left} style={{ background: 'var(--accent-color)' }} />
+      {type !== 'trigger' && (
+        <Handle type="target" position={Position.Left} style={{ background: 'var(--accent-color)' }} />
+      )}
       <Handle type="source" position={Position.Right} style={{ background: 'var(--accent-color)' }} />
     </div>
   );
