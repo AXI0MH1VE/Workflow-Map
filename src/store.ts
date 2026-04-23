@@ -21,6 +21,7 @@ const initialProjects: Project[] = [
     edges: [{ id: 'e1-2', source: '1', target: '2' }],
     notes: '# Auth Service Documentation\nThis system handles OAuth2 flows.',
     status: 'active',
+    auditProposals: [],
     lastUpdated: new Date().toISOString(),
   },
   {
@@ -32,6 +33,7 @@ const initialProjects: Project[] = [
     edges: [],
     notes: '# DB Sync\nDetails about replication logic.',
     status: 'active',
+    auditProposals: [],
     lastUpdated: new Date().toISOString(),
   },
   {
@@ -43,6 +45,7 @@ const initialProjects: Project[] = [
     edges: [],
     notes: '# Customer Portal\nManaged UI components.',
     status: 'active',
+    auditProposals: [],
     lastUpdated: new Date().toISOString(),
   }
 ];
@@ -133,6 +136,7 @@ export const useWorkspaceStore = create<WorkspaceState & WorkspaceActions & { sh
                 status: 'active',
                 token: `jwt_${Math.random().toString(36).substr(2, 9)}`,
                 lastDeployed: new Date().toISOString(),
+                assuranceLevel: 'MATHEMATICALLY_PROVEN',
               },
             }
           : p
@@ -163,6 +167,7 @@ export const useWorkspaceStore = create<WorkspaceState & WorkspaceActions & { sh
       edges: [],
       notes: '',
       status: 'active',
+      auditProposals: [],
       lastUpdated: new Date().toISOString(),
     };
 
