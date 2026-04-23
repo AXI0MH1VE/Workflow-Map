@@ -144,6 +144,18 @@ const Header = () => {
           >
             DOCUMENTATION
           </button>
+          <button 
+            className="brute-btn"
+            style={{ 
+              border: 'none', 
+              fontSize: '10px', 
+              background: viewMode === 'GPT_INTERFACE' ? 'var(--accent-color)' : 'transparent',
+              color: viewMode === 'GPT_INTERFACE' ? '#000' : 'var(--text-primary)'
+            }}
+            onClick={() => setViewMode('GPT_INTERFACE')}
+          >
+            AXIOM HIVE MODEL
+          </button>
         </div>
       </div>
       
@@ -194,6 +206,75 @@ const NotesEditor = () => {
           value={project.notes}
           onChange={(e) => updateNotes(e.target.value)}
         />
+      </div>
+    </div>
+  );
+};
+
+const GPTInterface = () => {
+  const { gptIntegration, sendGPTMessage } = useWorkspaceStore();
+  const [input, setInput] = useState('');
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    sendGPTMessage(input);
+    setInput('');
+  };
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', background: '#080808' }}>
+      <div style={{ padding: '20px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h2 style={{ fontSize: '16px', margin: 0, color: 'var(--accent-color)' }}>AXIOM HIVE MODEL</h2>
+          <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>DETERMINISTIC EVALUATION ENGINE</div>
+        </div>
+        <div style={{ fontSize: '10px', fontFamily: 'var(--font-mono)' }}>STATUS: ONLINE</div>
+      </div>
+      
+      <div style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {gptIntegration.conversationHistory.length === 0 ? (
+          <div style={{ margin: 'auto', color: 'var(--text-secondary)', fontSize: '12px', textAlign: 'center' }}>
+            AWAITING INPUT PARAMETERS...<br />
+            STRICT ADHERENCE TO EUCLIDEAN AUDIT PROPOSALS INITIATED.
+          </div>
+        ) : (
+          gptIntegration.conversationHistory.map((msg) => (
+            <div key={msg.id} style={{ 
+              alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
+              background: msg.role === 'user' ? 'var(--accent-color)' : 'rgba(0,0,0,0.5)',
+              color: msg.role === 'user' ? '#000' : 'var(--text-primary)',
+              border: msg.role === 'user' ? 'none' : '1px solid var(--border-color)',
+              padding: '12px 16px',
+              maxWidth: '80%',
+              fontSize: '13px',
+              lineHeight: '1.5'
+            }}>
+              <div style={{ fontSize: '9px', opacity: 0.7, marginBottom: '4px', fontWeight: 800 }}>{msg.role === 'user' ? 'OPERATOR' : 'AXIOM HIVE'} // {new Date(msg.timestamp).toLocaleTimeString()}</div>
+              {msg.content}
+            </div>
+          ))
+        )}
+      </div>
+
+      <div style={{ padding: '20px', borderTop: '1px solid var(--border-color)', display: 'flex', gap: '12px' }}>
+        <input 
+          type="text" 
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          placeholder="ENTER DETERMINISTIC INSTRUCTION..."
+          style={{
+            flex: 1,
+            background: 'rgba(0,0,0,0.5)',
+            border: '1px solid var(--border-color)',
+            color: 'var(--text-primary)',
+            padding: '12px',
+            fontSize: '12px',
+            fontFamily: 'var(--font-mono)',
+            outline: 'none'
+          }}
+        />
+        <button className="brute-btn primary" onClick={handleSend} style={{ border: 'none' }}>EXECUTE</button>
       </div>
     </div>
   );
@@ -325,8 +406,10 @@ function App() {
               <Background />
               <Controls />
             </ReactFlow>
-          ) : (
+          ) : viewMode === 'NOTES' ? (
             <NotesEditor />
+          ) : (
+            <GPTInterface />
           )}
         </div>
       </main>
