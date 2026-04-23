@@ -26,7 +26,10 @@ A low-latency canvas for visual programming. Current supported node primitives i
 *   **STG (Storage)**: Persistent data interface nodes.
 *   **AST (Asset)**: Static and dynamic resource references.
 
-#### C. Live Inspector
+#### C. Axiom Hive Model (Evaluation Engine)
+A built-in deterministic evaluation engine providing a command interface for generating strictly formatted code structures and enforcing adherence to Euclidean Audit Proposals.
+
+#### D. Live Inspector
 A contextual properties panel providing real-time telemetry, deployment status, and database synchronization controls.
 
 ### 3. Evidentiary Rigor & Human-Centric Control
